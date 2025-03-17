@@ -22,8 +22,8 @@ export default function About() {
         <section className={styles.section}>
           <h3>What Is Velocity Bot?</h3>
           <p>
-            I'm here to help founders develop and refine their 12-week roadmap for the 
-            Velocity Pitch Competition. Whether you're brainstorming ideas, planning your 
+            I&apos;m here to help founders develop and refine their 12-week roadmap for the 
+            Velocity Pitch Competition. Whether you&apos;re brainstorming ideas, planning your 
             execution strategy, or looking to understand what unicorn speed looks like, 
             I can provide guidance and insights to help shape your journey.
           </p>
