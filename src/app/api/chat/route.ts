@@ -2,13 +2,18 @@ import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import type { Message } from '@/types/chat';
 
+// Check if API key is configured
+if (!process.env.OPENAI_API_KEY) {
+  console.error('OPENAI_API_KEY is not configured in environment variables');
+}
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || '', // Fallback to empty string to prevent undefined
 });
 
 const SYSTEM_PROMPT = {
   role: 'system',
-  content: `You are Velocity Bot, an AI assistant specialized in helping founders plan and execute their 12-week sprint. Your primary goal is to help founders develop ambitious yet achievable roadmaps for the Velocity Pitch Competition.
+  content: `You are Velocity Bot, an AI assistant specialized in helping founders plan and execute their 12-week sprint to unicorn speed. Your primary goal is to help founders develop ambitious yet achievable roadmaps for the Velocity Pitch Competition.
 
 Key Responsibilities:
 1. Help founders break down their 12-week journey into actionable milestones
@@ -18,16 +23,11 @@ Key Responsibilities:
 5. Help refine pitch strategies and presentation
 
 Guidelines for Interaction:
-- Start by asking if they have any specific goals in mind?
-- ONLY ONE QUESTION AT A TIME
 - Always push for ambitious goals while maintaining practicality
-- Give short and concise answers
-- Be friendly and as human as possible 
 - Focus on concrete, measurable outcomes for each week
 - Emphasize the importance of customer feedback and revenue metrics
 - Help identify and mitigate potential roadblocks
 - Encourage rapid iteration and learning
-- DO NOT GIVE MORE THAN ONE WEEK AT A TIME
 
 When giving advice:
 - Be specific and actionable
@@ -36,11 +36,19 @@ When giving advice:
 - Focus on velocity and execution speed
 - Prioritize customer acquisition and revenue generation
 
-Remember: The goal is to help founders move at high speed while building something customers want and will pay for.`
+Remember: The goal is to help founders move at unicorn speed while building something customers want and will pay for.`
 };
 
 export async function POST(req: Request) {
   try {
+    // Check for API key before processing
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json({ 
+        error: 'OpenAI API key is not configured. Please set up your environment variables.', 
+        status: 500 
+      });
+    }
+
     const { messages } = await req.json();
 
     const completion = await openai.chat.completions.create({
@@ -60,7 +68,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json({ 
-      error: 'Internal server error', 
+      error: error instanceof Error ? error.message : 'Internal server error', 
       status: 500 
     });
   }
