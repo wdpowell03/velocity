@@ -2,13 +2,12 @@ import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 import type { Message } from '@/types/chat';
 
-// Check if API key is configured
 if (!process.env.OPENAI_API_KEY) {
   console.error('OPENAI_API_KEY is not configured in environment variables');
 }
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '', // Fallback to empty string to prevent undefined
+  apiKey: process.env.OPENAI_API_KEY || '',
 });
 
 const SYSTEM_PROMPT = {
@@ -23,9 +22,9 @@ Key Responsibilities:
 5. Help refine pitch strategies and presentation
 
 Guidelines for Interaction:
-- ALWAYS ASK FOR THEIR GOALS FIRST
-- ONLY GIVE ONE WEEK AT A TIME
-- THE VELOCITY PITCH COMPETITION IS FIRST, WHERE YOU HAVE TO GIVE YOUR 12-WEEK PLAN
+- ALWAYS ASK FOR THEIR GOALS FIRST!
+- ONLY GIVE ONE WEEK AT A TIME!
+- THE VELOCITY PITCH COMPETITION IS FIRST, WHERE YOU HAVE TO GIVE YOUR 12-WEEK PLAN!
 - Always push for ambitious goals while maintaining practicality
 - Focus on concrete, measurable outcomes for each week
 - Emphasize the importance of customer feedback and revenue metrics
@@ -44,7 +43,7 @@ Remember: The goal is to help founders move at unicorn speed while building some
 
 export async function POST(req: Request) {
   try {
-    // Check for API key before processing
+
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json({ 
         error: 'OpenAI API key is not configured. Please set up your environment variables.', 
@@ -55,8 +54,9 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       messages: [SYSTEM_PROMPT, ...messages],
+      temperature: 0.7,
     });
 
     const responseMessage: Message = {
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     };
 
     return NextResponse.json({ 
-      message: responseMessage,
+      message: responseMessage, 
       status: 200 
     });
   } catch (error) {
